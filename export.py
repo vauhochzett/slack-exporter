@@ -229,7 +229,9 @@ def main():
     # Create a directory in which to store the data
     export_dir: str = "export"
     export_file: str = (
-        f"{chosen_conversation}_{conversations[chosen_conversation]['desc']}"
+        f"{conversations[chosen_conversation]['title']}_"
+        + dt.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        + ".json"
     )
     export_path: str = os.path.join(export_dir, export_file)
     if os.path.lexists(export_path):
