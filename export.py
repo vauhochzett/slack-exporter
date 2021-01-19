@@ -62,34 +62,48 @@ def fetch_conversations(conversations_data, users: Dict[str, Dict[str, str]]):
         conv_id = conversation["id"]
         conversations[conv_id] = dict()
         if conversation["is_im"]:
-            conversations[conv_id]["desc"] = (
-                f"IM with " f"{users[conversation['user']]['name']}"
-            )
-            conversations[conv_id]["who"] = (
-                f"{users[conversation['user']]['name']} " f"(ID {conversation['user']})"
+            conv_partner: str = users[conversation["user"]]["name"]
+            conversations[conv_id].update(
+                {
+                    "title": f"@{conv_partner}",
+                    "desc": (f"IM with " f"{conv_partner}"),
+                    "who": (
+                        f"{users[conversation['user']]['name']} "
+                        f"(ID {conversation['user']})"
+                    ),
+                }
             )
         elif conversation["is_mpim"]:
             purpose: str = conversation["purpose"]["value"]
             if purpose.startswith("Group messaging with: "):
                 purpose = purpose[22:]
-            conversations[conv_id]["desc"] = f"Group IM: " f"{purpose}"
-            conversations[conv_id]["who"] = (
-                f"{users[conversation['creator']]['name']} "
-                f"(ID {conversation['creator']})"
+
+            conversations[conv_id].update(
+                {
+                    "title": purpose,
+                    "desc": f"Group IM: " f"{purpose}",
+                    "who": (
+                        f"{users[conversation['creator']]['name']} "
+                        f"(ID {conversation['creator']})"
+                    ),
+                }
             )
         elif conversation["is_channel"] or conversation["is_group"]:
-            conversations[conv_id]["desc"] = (
-                f"Channel \"{conversation['name']}\" "
-                f"({'private' if conversation['is_private'] else 'public'}) "
-            )
-            conversations[conv_id]["who"] = (
-                f"{users[conversation['creator']]['name']} "
-                f"(ID {conversation['creator']})"
+            conversations[conv_id].update(
+                {
+                    "title": f"#{conversation['name']}",
+                    "desc": (
+                        f"Channel \"{conversation['name']}\" "
+                        f"({'private' if conversation['is_private'] else 'public'}) "
+                    ),
+                    "who": (
+                        f"{users[conversation['creator']]['name']} "
+                        f"(ID {conversation['creator']})"
+                    ),
+                }
             )
         else:
-            conversations[conv_id][
-                "desc"
-            ] = f"Unknown conversation type: {conversation}"
+            raise IOError(f"Unknown conversation type.\nConversation:\n{conversation}")
 
     return conversations
 
