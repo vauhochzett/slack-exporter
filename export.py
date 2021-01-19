@@ -1,5 +1,6 @@
 import argparse
 import datetime as dt
+import importlib
 import json
 import os
 import random
@@ -156,6 +157,11 @@ def replace_mentions(messages: List[Dict[str, str]], users: Dict[str, Dict[str, 
 def main():
     parser = argparse.ArgumentParser(description="Export Slack history")
     parser.add_argument("token", help="Slack Access Token")
+    parser.add_argument(
+        "--extra-users",
+        action="store_true",
+        help="Use a list of additional users not registered in the Slack.",
+    )
     args = parser.parse_args()
 
     # Make sure the authentication token is valid
@@ -171,6 +177,9 @@ def main():
     print("Fetching users...")
     users_data = retrieve_data("users.list", PAYLOAD)
     users: Dict[str, Dict[str, str]] = fetch_users(users_data)
+    if args.extra_users:
+        extra = importlib.import_module("users")
+        users.update(extra.EXTRA_USERS)
 
     message_types: List[str] = ["public_channel", "private_channel", "mpim", "im"]
     option, _ = pick(message_types, "Select the conversation type:")

@@ -1,0 +1,3 @@
+EXTRA_USERS = {
+    "ABC12D3EF": {"real_name": "Max Mustermann", "name": "max"},
+}
