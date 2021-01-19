@@ -209,7 +209,8 @@ def main():
     # Selection
     _, index = pick(
         [
-            f"{conv_id} | {conv_data['desc']}"
+            f"{conv_data['title'] if len(conv_data['title']) <= 20 else conv_data['title'][:17] + '...':<20}"
+            + f" | {conv_data['desc']}"
             for conv_id, conv_data in conversations.items()
         ],
         "Select the conversation to export:",
