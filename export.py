@@ -49,7 +49,8 @@ def fetch_users(users_data) -> Dict[str, Dict[str, str]]:
     users: Dict[str, Dict[str, str]] = dict()
     for member in users_data["members"]:
         users[member["id"]] = {
-            "name": member["name"],
+            # Real users have a display_name, bots don't.
+            "name": member["profile"]["display_name"] or member["name"],
             "real_name": member["profile"]["real_name"],
         }
     return users
