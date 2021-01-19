@@ -1,5 +1,4 @@
 export/
-.vscode/launch.json
 
 # Created by https://www.gitignore.io/api/linux,python,visualstudiocode
 
@@ -151,7 +150,7 @@ pip-selfcheck.json
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
-!.vscode/launch.json
+# !.vscode/launch.json
 !.vscode/extensions.json
 
 
