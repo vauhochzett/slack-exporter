@@ -197,9 +197,14 @@ def main():
         users.update(extra.EXTRA_USERS)
 
     message_types: List[str] = ["public_channel", "private_channel", "mpim", "im"]
-    option, _ = pick(message_types, "Select the conversation type:")
+    selection = pick(
+        message_types,
+        "Select the conversation type (at least one; [space] to select, [enter] to confirm):",
+        multiselect=True,
+        min_selection_count=1,
+    )
 
-    PAYLOAD["types"] = option
+    PAYLOAD["types"] = ", ".join([o for o, i in selection])
     print("Fetching conversations...")
     conversations_data = retrieve_data("conversations.list", PAYLOAD)
     conversations: Dict[str, Dict[str, str]] = fetch_conversations(
