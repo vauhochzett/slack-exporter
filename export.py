@@ -145,11 +145,7 @@ def fetch_messages(payload, users) -> List[Dict[str, str]]:
             # change the 'latest' argument to fetch older messages
             payload["latest"] = messages_data["messages"][-1]["ts"]
 
-        r = requests.get(f"https://slack.com/api/conversations.history", params=payload)
-        if not r.ok:
-            raise IOError(f"Something went wrong. Status code: {r.status_code}")
-
-        messages_data = r.json()
+        messages_data = retrieve_data("conversations.history", payload)
         messages.extend(_collect_messages(messages_data, users))
 
         if not messages_data["has_more"]:
