@@ -45,7 +45,7 @@ def retrieve_data(endpoint, payload):
     return data
 
 
-def fetch_users(users_data) -> Dict[str, Dict[str, str]]:
+def get_users(users_data) -> Dict[str, Dict[str, str]]:
     users: Dict[str, Dict[str, str]] = dict()
     for member in users_data["members"]:
         users[member["id"]] = {
@@ -56,7 +56,7 @@ def fetch_users(users_data) -> Dict[str, Dict[str, str]]:
     return users
 
 
-def fetch_conversations(conversations_data, users: Dict[str, Dict[str, str]]):
+def get_conversations(conversations_data, users: Dict[str, Dict[str, str]]):
     conversations: Dict[str, Dict[str, str]] = dict()
     for conversation in conversations_data["channels"]:
         conv_id = conversation["id"]
@@ -134,7 +134,7 @@ def _collect_messages(messages_data, users) -> List[Dict[str, str]]:
     return messages
 
 
-def fetch_messages(payload, users) -> List[Dict[str, str]]:
+def fetch_and_get_messages(payload, users) -> List[Dict[str, str]]:
     messages_data = None
     messages: List[Dict[str, str]] = []
 
@@ -187,7 +187,7 @@ def main():
     # Retrieve users and conversations lists
     print("Fetching users...")
     users_data = retrieve_data("users.list", PAYLOAD)
-    users: Dict[str, Dict[str, str]] = fetch_users(users_data)
+    users: Dict[str, Dict[str, str]] = get_users(users_data)
     if args.extra_users:
         extra = importlib.import_module("users")
         users.update(extra.EXTRA_USERS)
@@ -203,7 +203,7 @@ def main():
     PAYLOAD["types"] = ", ".join([o for o, i in selection])
     print("Fetching conversations...")
     conversations_data = retrieve_data("conversations.list", PAYLOAD)
-    conversations: Dict[str, Dict[str, str]] = fetch_conversations(
+    conversations: Dict[str, Dict[str, str]] = get_conversations(
         conversations_data, users
     )
 
@@ -221,7 +221,7 @@ def main():
 
     # Download messages
     print("Downloading...")
-    messages: List[Dict[str, str]] = fetch_messages(PAYLOAD, users)
+    messages: List[Dict[str, str]] = fetch_and_get_messages(PAYLOAD, users)
     # Replace mention tags with @name
     replace_mentions(messages, users)
 
